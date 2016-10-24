@@ -1,22 +1,24 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using Nez;
+using RoomGen;
 
 namespace ncot_assam
 {
     /// <summary>
     /// This is the main type for your game.
     /// </summary>
-    public class Game1 : Game
+    public class Game1 : Core
     {
-        GraphicsDeviceManager graphics;
+        Scene myScene;
         SpriteBatch spriteBatch;
-        
-        public Game1()
-        {
-            graphics = new GraphicsDeviceManager(this);
-            Content.RootDirectory = "Content";
-        }
+        RoomManager roomManager;
+        SpriteFont font;
+        RoomDrawer roomDrawer;
+
+        public Game1() : base(width: 1024, height: 768, isFullScreen: false, enableEntitySystems: false)
+        { }
 
         /// <summary>
         /// Allows the game to perform any initialization it needs to before starting to run.
@@ -27,8 +29,17 @@ namespace ncot_assam
         protected override void Initialize()
         {
             // TODO: Add your initialization logic here
-
+            font = Content.Load<SpriteFont>("DebugFont");
+            spriteBatch = new SpriteBatch(GraphicsDevice);
             base.Initialize();
+            Window.Title = "Room Generator";
+            Window.AllowUserResizing = false;
+            roomManager = new RoomManager();
+            roomManager.Generate();
+            Physics.gravity = Vector2.Zero;
+            myScene = Scene.createWithDefaultRenderer(Color.CornflowerBlue);
+            Input.gamePads[0].isLeftStickVertcialInverted = true;
+            roomDrawer = new RoomDrawer(spriteBatch, roomManager, font, GraphicsDevice);
         }
 
         /// <summary>
@@ -63,7 +74,7 @@ namespace ncot_assam
                 Exit();
 
             // TODO: Add your update logic here
-
+            roomDrawer.SwitchRoom();
             base.Update(gameTime);
         }
 
@@ -78,6 +89,7 @@ namespace ncot_assam
             // TODO: Add your drawing code here
 
             base.Draw(gameTime);
+            roomDrawer.DrawRoom(graphicsDevice.Viewport.Width, graphicsDevice.Viewport.Height);
         }
     }
 }
