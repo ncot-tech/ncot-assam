@@ -42,7 +42,11 @@
     <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="ExitHitDetector.cs" />
     <Compile Include="Game1.cs" />
+    <Compile Include="ImpulseMover.cs" />
+    <Compile Include="RoomRenderer.cs" />
+    <Compile Include="Scenes\GameScreen.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Room.cs" />

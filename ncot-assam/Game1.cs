@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Nez;
 using RoomGen;
+using Scenes;
 
 namespace ncot_assam
 {
@@ -11,11 +12,11 @@ namespace ncot_assam
     /// </summary>
     public class Game1 : Core
     {
-        Scene myScene;
-        SpriteBatch spriteBatch;
-        RoomManager roomManager;
-        SpriteFont font;
-        RoomDrawer roomDrawer;
+        //Scene myScene;
+        
+        
+        
+        
 
         public Game1() : base(width: 1024, height: 768, isFullScreen: false, enableEntitySystems: false)
         { }
@@ -29,17 +30,12 @@ namespace ncot_assam
         protected override void Initialize()
         {
             // TODO: Add your initialization logic here
-            font = Content.Load<SpriteFont>("DebugFont");
-            spriteBatch = new SpriteBatch(GraphicsDevice);
+            
             base.Initialize();
             Window.Title = "Room Generator";
             Window.AllowUserResizing = false;
-            roomManager = new RoomManager();
-            roomManager.Generate();
-            Physics.gravity = Vector2.Zero;
-            myScene = Scene.createWithDefaultRenderer(Color.CornflowerBlue);
-            Input.gamePads[0].isLeftStickVertcialInverted = true;
-            roomDrawer = new RoomDrawer(spriteBatch, roomManager, font, GraphicsDevice);
+
+            scene = new GameScreen();
         }
 
         /// <summary>
@@ -48,8 +44,7 @@ namespace ncot_assam
         /// </summary>
         protected override void LoadContent()
         {
-            // Create a new SpriteBatch, which can be used to draw textures.
-            spriteBatch = new SpriteBatch(GraphicsDevice);
+            
 
             // TODO: use this.Content to load your game content here
         }
@@ -74,7 +69,7 @@ namespace ncot_assam
                 Exit();
 
             // TODO: Add your update logic here
-            roomDrawer.SwitchRoom();
+            //roomDrawer.SwitchRoom();
             base.Update(gameTime);
         }
 
@@ -84,12 +79,10 @@ namespace ncot_assam
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime)
         {
-            GraphicsDevice.Clear(Color.CornflowerBlue);
-
             // TODO: Add your drawing code here
 
             base.Draw(gameTime);
-            roomDrawer.DrawRoom(graphicsDevice.Viewport.Width, graphicsDevice.Viewport.Height);
+            //roomDrawer.DrawRoom(graphicsDevice.Viewport.Width, graphicsDevice.Viewport.Height);
         }
     }
 }
