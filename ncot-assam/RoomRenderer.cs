@@ -1,11 +1,12 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
 using Nez;
 using System;
 
 namespace RoomGen
 {
-    class RoomRenderer : RenderableComponent
+    class RoomRenderer : RenderableComponent, IUpdatable
     {
         public override float width { get { return _width; } }
         public override float height { get { return _height; } }
@@ -17,6 +18,7 @@ namespace RoomGen
         RoomManager roomManager;
         NezSpriteFont font;
 
+        bool _changeRooms;
         float _width;
         float _height;
         int colliderCounter;
@@ -32,8 +34,18 @@ namespace RoomGen
             makeDoorCoord = (xy, off) => off + (xy * (64 + 2));
             _width = Core.graphicsDevice.Viewport.Width;
             _height = Core.graphicsDevice.Viewport.Height;
+            
+        }
+
+        public override void onAddedToEntity()
+        {
+            base.onAddedToEntity();
+            _changeRooms = true;
+
             colliderCounter = 0;
             exitColliderCounter = 0;
+            bool[] roomExits = roomManager.GetCurrentExits();
+            createColliders(roomExits);
         }
 
         private void addCollider(float x, float y, float w, float h)
@@ -48,12 +60,11 @@ namespace RoomGen
         private void addExitCollider(int id, float x, float y, float w, float h)
         {
             var collider = new BoxCollider(x, y, w, h);
-            collider.entity = entity;
+            collider.entity = entity.scene.findEntity("exit-" + id.ToString());
             _exitColliders[exitColliderCounter] = collider;
             collider.isTrigger = true;
-            //Flags.setFlag(ref collider.physicsLayer, id);
-            //Physics.addCollider(collider);
-            entity.addCollider(collider);
+            collider.entity.removeAllColliders();
+            collider.entity.addCollider(collider);
             exitColliderCounter++;
         }
 
@@ -113,11 +124,13 @@ namespace RoomGen
                 return;
 
             foreach (var collider in _colliders)
-                Physics.removeCollider(collider);
+                if (collider != null)
+                    Physics.removeCollider(collider);
             _colliders = null;
 
             foreach (var collider in _exitColliders)
-                Physics.removeCollider(collider);
+                if (collider != null)
+                    Physics.removeCollider(collider);
             _exitColliders = null;
 
             colliderCounter = 0;
@@ -132,12 +145,6 @@ namespace RoomGen
             graphics.batcher.drawString(font, exitLabel, FontPos, Color.Yellow, 0, FontOrigin, 1.0f, SpriteEffects.None, 1);
 
             bool[] roomExits = roomManager.GetCurrentExits();
-            if (_colliders == null)
-            {
-                createColliders(roomExits);
-                colliderCounter = 0;
-                exitColliderCounter = 0;
-            }
 
             if (roomExits[0] == true)    // N
             {
@@ -182,7 +189,76 @@ namespace RoomGen
 
         public bool SwitchRoom(Exit exit)
         {
-            return roomManager.ExitRoomToThe(exit);
+            _changeRooms = roomManager.ExitRoomToThe(exit);
+            return _changeRooms; 
+        }
+
+        public bool SwitchRoom()
+        {
+            bool roomChangeSuccess = false;
+            bool[] roomExits = roomManager.GetCurrentExits();
+
+            if (GamePad.GetState(PlayerIndex.One).DPad.Up == ButtonState.Pressed)
+            {
+                if (roomExits[0] == true)
+                {
+                    roomChangeSuccess = roomManager.ExitRoomToThe(Exit.NORTH);
+                }
+                else
+                {
+                    roomChangeSuccess = false;
+                }
+            }
+            else
+            if (GamePad.GetState(PlayerIndex.One).DPad.Right == ButtonState.Pressed)
+            {
+                if (roomExits[1] == true)
+                {
+                    roomChangeSuccess = roomManager.ExitRoomToThe(Exit.EAST);
+                }
+                else
+                {
+                    roomChangeSuccess = false;
+                }
+            }
+            else
+            if (GamePad.GetState(PlayerIndex.One).DPad.Down == ButtonState.Pressed)
+            {
+                if (roomExits[2] == true)
+                {
+                    roomChangeSuccess = roomManager.ExitRoomToThe(Exit.SOUTH);
+                }
+                else
+                {
+                    roomChangeSuccess = false;
+                }
+            }
+            else
+            if (GamePad.GetState(PlayerIndex.One).DPad.Left == ButtonState.Pressed)
+            {
+                if (roomExits[3] == true)
+                {
+                    roomChangeSuccess = roomManager.ExitRoomToThe(Exit.WEST);
+                }
+                else
+                {
+                    roomChangeSuccess = false;
+                }
+            }
+
+            return roomChangeSuccess;
+        }
+
+        public void update()
+        {
+            if (_changeRooms)
+            {
+                Debug.log("Need to change rooms");
+                _changeRooms = false;
+                clearColliders();
+                bool[] roomExits = roomManager.GetCurrentExits();
+                createColliders(roomExits);
+            }
         }
     }
 }

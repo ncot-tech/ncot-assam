@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
 using ncot_assam;
 using Nez;
 using Nez.Sprites;
@@ -19,15 +20,16 @@ namespace Scenes
 
         public override void initialize()
         {
-            var friction = 1.0f;
-            var elasticity = 0.0f;
-
             base.initialize();
             setDesignResolution(1024, 768, SceneResolutionPolicy.None);
             Screen.setSize(1024, 768);
 
             clearColor = Color.DarkGray;
             addRenderer(new DefaultRenderer());
+            var e0 = createEntity("exit-0");
+            var e1 = createEntity("exit-1");
+            var e2 = createEntity("exit-2");
+            var e3 = createEntity("exit-3");
 
             roomManager = new RoomManager();
             roomManager.Generate();
@@ -37,84 +39,25 @@ namespace Scenes
             Physics.gravity = Vector2.Zero;
             Input.gamePads[0].isLeftStickVertcialInverted = true;
 
-            var entityOne = createEntity(new Vector2(200, 200), 15f, friction, elasticity, Vector2.Zero, beeTexture);
+            var player = createEntity("player", new Vector2(200, 200), beeTexture);
             var roomEntity = createEntity("room-manager-entity");
             roomEntity.addComponent(new RoomRenderer(roomManager, font));
-            roomEntity.addComponent(new ExitHitDetector());
+            
+
         }
 
-        ArcadeRigidbody createEntity(Vector2 position, float mass, float friction, float elasticity, Vector2 velocity, Texture2D texture)
+        Entity createEntity(string name, Vector2 position, Texture2D texture)
         {
-            var rigidbody = new ArcadeRigidbody()
-                .setMass(mass)
-                .setFriction(friction)
-                .setElasticity(elasticity)
-                .setVelocity(velocity);
-
-            var entity = createEntity(Utils.randomString(3));
+            var entity = createEntity(name);
             entity.transform.position = position;
             entity.addComponent(new Sprite(texture));
-            entity.addComponent(rigidbody);
-            entity.addComponent(new ImpulseMover());
+            entity.addComponent(new SimpleMover());
             entity.addCollider(new CircleCollider());
             entity.addComponent(new ExitHitDetector());
-            return rigidbody;
+            return entity;
         }
 
-        //public bool SwitchRoom()
-        //{
-        //    bool roomChangeSuccess = false;
-        //    bool[] roomExits = roomManager.GetCurrentExits();
 
-        //    if (GamePad.GetState(PlayerIndex.One).DPad.Up == ButtonState.Pressed)
-        //    {
-        //        if (roomExits[0] == true)
-        //        {
-        //            roomChangeSuccess = roomManager.ExitRoomToThe(Exit.NORTH);
-        //        }
-        //        else
-        //        {
-        //            roomChangeSuccess = false;
-        //        }
-        //    }
-        //    else
-        //    if (GamePad.GetState(PlayerIndex.One).DPad.Right == ButtonState.Pressed)
-        //    {
-        //        if (roomExits[1] == true)
-        //        {
-        //            roomChangeSuccess = roomManager.ExitRoomToThe(Exit.EAST);
-        //        }
-        //        else
-        //        {
-        //            roomChangeSuccess = false;
-        //        }
-        //    }
-        //    else
-        //    if (GamePad.GetState(PlayerIndex.One).DPad.Down == ButtonState.Pressed)
-        //    {
-        //        if (roomExits[2] == true)
-        //        {
-        //            roomChangeSuccess = roomManager.ExitRoomToThe(Exit.SOUTH);
-        //        }
-        //        else
-        //        {
-        //            roomChangeSuccess = false;
-        //        }
-        //    }
-        //    else
-        //    if (GamePad.GetState(PlayerIndex.One).DPad.Left == ButtonState.Pressed)
-        //    {
-        //        if (roomExits[3] == true)
-        //        {
-        //            roomChangeSuccess = roomManager.ExitRoomToThe(Exit.WEST);
-        //        }
-        //        else
-        //        {
-        //            roomChangeSuccess = false;
-        //        }
-        //    }
-
-        //    return roomChangeSuccess;
-        //}
+        
     }
 }

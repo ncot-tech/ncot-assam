@@ -18,7 +18,7 @@ namespace ncot_assam
         
         
 
-        public Game1() : base(width: 1024, height: 768, isFullScreen: false, enableEntitySystems: false)
+        public Game1() : base(width: 1024, height: 768, isFullScreen: false, enableEntitySystems: true)
         { }
 
         /// <summary>
