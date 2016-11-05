@@ -5,10 +5,9 @@ using System.Diagnostics;
 
 namespace RoomGen
 {
-    class RoomManager
+    public class RoomManager
     {
         private Room[,] rooms;
-        public Point currentRoomCoords { get; private set; }
         Random rng;
         
         public RoomManager()
@@ -16,7 +15,16 @@ namespace RoomGen
             rooms = new Room[10, 10];
             rng = new Random();
             rooms[0, 0] = new Room(0,0);
-            currentRoomCoords = new Point(0, 0);
+        }
+
+        public Room GetRoom(Vector2 location)
+        {
+            return rooms[(int)location.Y, (int)location.X];
+        }
+
+        public Room GetRoom(int x, int y)
+        {
+            return rooms[y, x];
         }
 
         private void GetExitCoord(int exit, int _x, int _y, out int x, out int y)
@@ -44,42 +52,6 @@ namespace RoomGen
                     y = 0;
                     break;
             }
-        }
-
-        /// <summary>
-        /// Returns a bit pattern to represent which exits exist
-        /// They go N, E, S, W
-        /// </summary>
-        /// <returns>a 4 bool array, True means the exit exists</returns>
-        public bool[] GetCurrentExits()
-        {
-            bool[] exits = new bool[] { false, false, false, false };
-
-            for (int i = 0; i < 4; i++)
-            {
-                int exitDir = rooms[currentRoomCoords.Y, currentRoomCoords.X].CheckValidExit((Exit)i);
-                if (exitDir != -1)
-                {
-                    exits[i] = true;
-                }
-            }
-
-            return exits;
-        }
-
-        public bool ExitRoomToThe(Exit exit)
-        {
-            bool exitSuccess = false;
-
-            int exitDir = rooms[currentRoomCoords.Y, currentRoomCoords.X].CheckValidExit(exit);
-            if (exitDir != -1)
-            {
-                Point newExits = rooms[currentRoomCoords.Y, currentRoomCoords.X].GetExitEntry(exitDir);
-                currentRoomCoords = newExits;
-                exitSuccess = true;
-            }
-
-            return exitSuccess;
         }
 
         /// <summary>

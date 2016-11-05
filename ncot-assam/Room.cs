@@ -8,6 +8,7 @@ namespace RoomGen
     {
         public Point[] Exits { get; private set; }
         public int numExits { get; private set; }
+        public Vector2 location { get { return new Vector2(_x, _y); } }
         int _x, _y;
         public Room(int x, int y)
         {
@@ -36,9 +37,9 @@ namespace RoomGen
             return Exits[exitIndex];
         }
 
-        public int CheckValidExit(Exit direction)
+        public bool CheckValidExit(Exit direction)
         {
-            int exit = -1;
+            bool exit = false;
 
             for (int i = 0; i < numExits; i++)
             {
@@ -46,22 +47,22 @@ namespace RoomGen
                 int edy = Exits[i].Y - _y;
                 if (edx == 0 && edy == -1 && direction == Exit.NORTH)            // N
                 {
-                    exit = i;
+                    exit = true;
                     break;
                 }
                 else if (edx == 1 && edy == 0 && direction == Exit.EAST)      // E                                                            
                 {
-                    exit = i;
+                    exit = true;
                     break;
                 }
-                else if (edx == 0 && edy == 1 && direction == Exit.SOUTH)      // S  x                                                         
+                else if (edx == 0 && edy == 1 && direction == Exit.SOUTH)      // S                                                           
                 {
-                    exit = i;
+                    exit = true;
                     break;
                 }
                 else if (edx == -1 && edy == 0 && direction == Exit.WEST)     // W                                                            
                 {
-                    exit = i;
+                    exit = true;
                     break;
                 }
             }

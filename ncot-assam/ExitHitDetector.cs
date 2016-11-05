@@ -12,26 +12,19 @@ namespace ncot_assam
             Debug.log("onTriggerEnter: {0} entered {1}", other, local);
             Debug.log("Trying to exit through: {0}", other.entity.name);
 
-            /// Todo: This is probably a bad thing to do!
-            RoomRenderer roomRenderer = other.entity.scene.findEntity("room-manager-entity").getComponent<RoomRenderer>();
-            
             switch (other.entity.name)
             {
-                case "exit-0":
-                    roomRenderer.SwitchRoom(Exit.NORTH);
-                    //local.entity.transform.setPosition(new Vector2(100, 100));
+                case "Exit-NORTH":
+                    GlobalData.currentRoomLocation = GlobalData.currentRoomLocation + new Vector2(0, -1);
                     break;
-                case "exit-1":
-                    roomRenderer.SwitchRoom(Exit.EAST);
-                    //local.entity.transform.setPosition(new Vector2(100, 100));
+                case "Exit-EAST":
+                    GlobalData.currentRoomLocation = GlobalData.currentRoomLocation + new Vector2(1, 0);
                     break;
-                case "exit-2":
-                    roomRenderer.SwitchRoom(Exit.SOUTH);
-                    //local.entity.transform.setPosition(new Vector2(100, 100));
+                case "Exit-SOUTH":
+                    GlobalData.currentRoomLocation = GlobalData.currentRoomLocation + new Vector2(0, 1);
                     break;
-                case "exit-3":
-                    roomRenderer.SwitchRoom(Exit.WEST);
-                    //local.entity.transform.setPosition(new Vector2(100, 100));
+                case "Exit-WEST":
+                    GlobalData.currentRoomLocation = GlobalData.currentRoomLocation + new Vector2(-1, 0);
                     break;
             }
         }

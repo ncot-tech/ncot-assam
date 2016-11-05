@@ -10,13 +10,11 @@ namespace ncot_assam
     /// <summary>
     /// This is the main type for your game.
     /// </summary>
+    /// 
+    
     public class Game1 : Core
     {
-        //Scene myScene;
-        
-        
-        
-        
+        GameScreen gameScene;
 
         public Game1() : base(width: 1024, height: 768, isFullScreen: false, enableEntitySystems: true)
         { }
@@ -35,7 +33,9 @@ namespace ncot_assam
             Window.Title = "Room Generator";
             Window.AllowUserResizing = false;
 
-            scene = new GameScreen();
+            GlobalData.Init();
+            gameScene = new GameScreen();
+            scene = gameScene;
         }
 
         /// <summary>
@@ -45,7 +45,6 @@ namespace ncot_assam
         protected override void LoadContent()
         {
             
-
             // TODO: use this.Content to load your game content here
         }
 
@@ -69,7 +68,12 @@ namespace ncot_assam
                 Exit();
 
             // TODO: Add your update logic here
-            //roomDrawer.SwitchRoom();
+            if (GlobalData.currentRoomLocation != GlobalData.nextRoomLocation)
+            {
+                Debug.log("Switching Rooms");
+                GlobalData.RoomSwitched();
+                gameScene.InitLevel();
+            }
             base.Update(gameTime);
         }
 

@@ -10,12 +10,21 @@ namespace Scenes
 {
     class GameScreen: Scene
     {
-        RoomManager roomManager;
-        SpriteFont font;
+        private Entity player;
+        private Texture2D playerTexture;
 
         public GameScreen() : base()
         {
             
+        }
+
+        public void InitLevel()
+        {
+            this.destroyAllEntities();
+            var room = createEntity("room-entity");
+            room.addComponent(new RoomRenderer());
+
+            player = createEntity("player", new Vector2(Screen.width / 2, Screen.height / 2), playerTexture);
         }
 
         public override void initialize()
@@ -26,24 +35,12 @@ namespace Scenes
 
             clearColor = Color.DarkGray;
             addRenderer(new DefaultRenderer());
-            var e0 = createEntity("exit-0");
-            var e1 = createEntity("exit-1");
-            var e2 = createEntity("exit-2");
-            var e3 = createEntity("exit-3");
 
-            roomManager = new RoomManager();
-            roomManager.Generate();
-
-            font = content.Load<SpriteFont>("DebugFont");
-            var beeTexture = content.Load<Texture2D>("atariBee");
+            playerTexture = content.Load<Texture2D>("atariBee");
             Physics.gravity = Vector2.Zero;
             Input.gamePads[0].isLeftStickVertcialInverted = true;
 
-            var player = createEntity("player", new Vector2(200, 200), beeTexture);
-            var roomEntity = createEntity("room-manager-entity");
-            roomEntity.addComponent(new RoomRenderer(roomManager, font));
-            
-
+            InitLevel();
         }
 
         Entity createEntity(string name, Vector2 position, Texture2D texture)
@@ -56,8 +53,5 @@ namespace Scenes
             entity.addComponent(new ExitHitDetector());
             return entity;
         }
-
-
-        
     }
 }
